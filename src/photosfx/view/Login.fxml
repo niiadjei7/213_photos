@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"  fx:controller = "photosfx.controller.LoginController" alignment="CENTER" spacing="10">
+
+    <children>
+        <TextField fx:id="usernameField" promptText="Username" />
+        <Button fx:id="loginButton" text="Login" onAction="#loginButtonClicked" />
+    </children>
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+</VBox>
