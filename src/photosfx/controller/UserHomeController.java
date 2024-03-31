@@ -1,9 +1,13 @@
 package photosfx.controller;
 
+import java.util.List;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+
+import photosfx.model.*;
 
 public class UserHomeController {
 
@@ -20,10 +24,48 @@ public class UserHomeController {
     private TextField albumNameField;
 
     @FXML
+    private Button deleteAlbumButton;
+
+    @FXML
     private Button createAlbumButton;
 
-    public void initData(String username) {
-        welcomeLabel.setText("Welcome, " + username + "!");
+    @FXML
+    private VBox albumsContainer;
+
+    private User user;
+
+    public void initialize(User user) {
+        this.user = user;
+        welcomeLabel.setText("Welcome, " + user.getUsername() + "!");
+        listAlbums();
+    }
+
+    private void listAlbums() {
+        // Clear existing albums
+        albumsContainer.getChildren().clear();
+
+        // Retrieve albums for the user
+        List<Album> albums = user.albumList();
+
+        // Create UI components for each album
+        for (Album album : albums) {
+            Button deleteButton = new Button("Delete");
+            deleteButton.setOnAction(event -> deleteAlbum(album));
+
+            Label albumLabel = new Label(album.getAlbumName());
+            VBox albumBox = new VBox(albumLabel, deleteButton);
+            albumsContainer.getChildren().add(albumBox);
+        }
+    }
+
+    private void deleteAlbum(Album album) {
+        boolean deleted = user.deleteAlbum(album);
+        if (deleted) {
+            listAlbums(); // Refresh album list
+            showAlert("Success", "Album deleted successfully.");
+        } else {
+            showAlert("Error", "Failed to delete album.");
+        }
     }
 
     @FXML

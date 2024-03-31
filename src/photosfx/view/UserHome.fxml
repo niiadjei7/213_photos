@@ -19,6 +19,7 @@
             <Button text="Save" onAction="#saveAlbumButtonClicked" />
             <Button text="Cancel" onAction="#cancelAlbumButtonClicked" />
         </VBox>
+        <VBox fx:id="albumsContainer" spacing="5" />
     </children>
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>

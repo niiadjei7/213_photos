@@ -8,6 +8,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.*;
 
+import photosfx.model.*;
+
 public class LoginController {
 
     @FXML
@@ -15,6 +17,8 @@ public class LoginController {
 
     @FXML
     private Button loginButton;
+
+    private User user;
 
     @FXML
     private void initialize() {
@@ -29,7 +33,7 @@ public class LoginController {
         if (username.equals("admin")) {
             openAdminView();
         } else {
-            openUserHome(username);
+            openUserHome(user);
         }
 
     }
@@ -50,12 +54,12 @@ public class LoginController {
         }
     }
 
-    private void openUserHome(String username) {
+    private void openUserHome(User user) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/UserHome.fxml"));
             Parent root = loader.load();
             UserHomeController controller = loader.getController();
-            controller.initData(username); // Pass username to UserHomeController
+            controller.initialize(user); // Pass username to UserHomeController
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.setTitle("User Home");

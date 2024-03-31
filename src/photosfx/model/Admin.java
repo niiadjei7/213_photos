@@ -1,5 +1,6 @@
 package photosfx.model;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class Admin {
         // Create a new user
         User user = new User(username, false); // Non-admin user
         users.add(user);
+        saveUser(user);
         return true;
     }
 
@@ -26,6 +28,7 @@ public class Admin {
         User user = userExists(username);
         if (user != null && !user.isAdmin()) {
             users.remove(user);
+            DataFileManager.deleteData("Admin" + File.separator + username + ".dat");
             return true;
         }
         return false; // User not found or is admin
@@ -42,5 +45,25 @@ public class Admin {
 
     public List<User> getUsers() {
         return this.users;
+    }
+
+    public void saveUser(User user) {
+        DataFileManager.saveData(user, "\\Admin\\" + user.getUsername() + ".dat");
+    }
+
+    public void loadUsers() {
+        String adminPath = DataFileManager.basePath + "\\Admin";
+        File adminFolder = new File(adminPath);
+        File[] userFiles = adminFolder.listFiles();
+        if (userFiles != null) {
+            for (File file : userFiles) {
+                if (file.isFile()) {
+                    User user = (User) DataFileManager.loadData(adminPath + "\\" + file.getName());
+                    if (user != null) {
+                        this.users.add(user);
+                    }
+                }
+            }
+        }
     }
 }
