@@ -17,5 +17,7 @@
 
     <!-- Button to add a new user -->
     <Button text="Add User" onAction="#addUserButtonClicked" />
+    <Button fx:id="logoutButton" text="Logout" onAction="#logoutButtonClicked" />
+
 
 </VBox>

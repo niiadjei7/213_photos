@@ -11,6 +11,7 @@ public class User implements Serializable {
     public User(String username, boolean isAdmin) {
         this.username = username;
         this.isAdmin = isAdmin;
+        this.albums = new ArrayList<>();
     }
 
     public String getUsername() {
@@ -25,8 +26,26 @@ public class User implements Serializable {
         return this.albums;
     }
 
+    public boolean addAlbum(String album) {
+        if (albums != null) {
+            for (Album x : this.albums) {
+                if (x.getAlbumName().equals(album)) {
+                    return false;// Make sure album name is not taken
+                }
+            }
+        }
+
+        Album x = new Album(album);
+        this.albums.add(x);
+        return true;
+    }
+
     public boolean deleteAlbum(Album album) {
         return albums.remove(album);
+    }
+
+    public void saveUser() {
+        DataFileManager.saveData(this, "\\Admin\\" + this.getUsername() + ".dat");
     }
 
     // Getters and setters

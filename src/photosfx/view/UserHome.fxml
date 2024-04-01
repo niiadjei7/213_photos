@@ -11,6 +11,7 @@
 
         <!-- Button to create a new album -->
         <Label fx:id="welcomeLabel" />
+        <VBox fx:id="albumsContainer" spacing="5" />
         <Button fx:id="createAlbumButton" text="Create Album" onAction="#createAlbumButtonClicked" />
     <!-- Text field and buttons for adding album -->
         <VBox fx:id="createAlbumBox" visible="false" spacing="5">
@@ -19,8 +20,8 @@
             <Button text="Save" onAction="#saveAlbumButtonClicked" />
             <Button text="Cancel" onAction="#cancelAlbumButtonClicked" />
         </VBox>
-        <VBox fx:id="albumsContainer" spacing="5" />
     </children>
+        <Button fx:id="logoutButton" text="Logout" onAction="#logoutButtonClicked" />
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>

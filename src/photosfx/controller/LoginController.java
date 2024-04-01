@@ -1,5 +1,7 @@
 package photosfx.controller;
 
+import java.io.File;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -27,12 +29,16 @@ public class LoginController {
 
     @FXML
     private void loginButtonClicked() {
-        String username = usernameField.getText();
+        String username = usernameField.getText().toLowerCase();
         // Here you can perform login logic, e.g., validating username/password
         System.out.println("Login button clicked with username: " + username);
         if (username.equals("admin")) {
             openAdminView();
         } else {
+            String userDataPath = DataFileManager.basePath + File.separator + "Admin" + File.separator
+                    + username.toLowerCase()
+                    + ".dat";
+            user = (User) DataFileManager.loadData(userDataPath);
             openUserHome(user);
         }
 
@@ -59,6 +65,9 @@ public class LoginController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/UserHome.fxml"));
             Parent root = loader.load();
             UserHomeController controller = loader.getController();
+            if (user == null) {
+                System.out.println("User not loaded");
+            }
             controller.initialize(user); // Pass username to UserHomeController
             Stage stage = new Stage();
             stage.setScene(new Scene(root));

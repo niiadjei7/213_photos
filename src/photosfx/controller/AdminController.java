@@ -2,6 +2,9 @@ package photosfx.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -9,7 +12,10 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import photosfx.model.*;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +32,9 @@ public class AdminController {
 
     @FXML
     private Button createUserButton;
+
+    @FXML
+    private Button logoutButton;
 
     @FXML
     private Button deleteUserButton;
@@ -107,6 +116,21 @@ public class AdminController {
         boolean deleted = admin.deleteUser(username);
         if (deleted) {
             userListVBox.getChildren().remove(userBox); // Remove the user entry from the list
+        }
+    }
+
+    @FXML
+    private void logoutButtonClicked() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Login.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) logoutButton.getScene().getWindow(); // Assuming logoutButton is the button that
+                                                                       // triggered the action
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle error appropriately
         }
     }
 }
