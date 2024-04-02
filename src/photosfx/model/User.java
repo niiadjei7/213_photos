@@ -48,5 +48,22 @@ public class User implements Serializable {
         DataFileManager.saveData(this, "\\Admin\\" + this.getUsername() + ".dat");
     }
 
+    public boolean renameAlbum(String currentName, String newName) {
+        // first check if the album name is already taken
+        for (Album x : this.albums) {
+            if (x.getAlbumName().equals(newName)) {
+                return false;
+            }
+        }
+
+        for (Album x : this.albums) {
+            if (x.getAlbumName().equals(currentName)) {
+                x.setAlbumName(newName);
+                return true;
+            }
+        }
+        return false;// album not found
+    }
+
     // Getters and setters
 }

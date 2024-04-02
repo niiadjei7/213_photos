@@ -2,6 +2,7 @@ package photosfx.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,6 +36,8 @@ public class UserHomeController {
 
     @FXML
     private Button logoutButton;
+    @FXML
+    private Button renameButton;
 
     @FXML
     private VBox albumsContainer;
@@ -53,7 +56,7 @@ public class UserHomeController {
     private void listAlbums() {
         // Clear existing albums
         albumsContainer.getChildren().clear();
-
+        String numPhotos = "";
         // Retrieve albums for the user
         List<Album> albums = user.albumList();
 
@@ -66,8 +69,15 @@ public class UserHomeController {
             Button deleteButton = new Button("Delete");
             deleteButton.setOnAction(event -> deleteAlbum(album));
 
+            Button renameButton = new Button("Rename");
+            renameButton.setOnAction(event -> renameAlbum(album));
+
+            numPhotos = album.getPhotos().size() + " photos " + album.getDateRange();
+
             Label albumLabel = new Label(album.getAlbumName());
-            VBox albumBox = new VBox(albumLabel, deleteButton);
+            Label numPhotoLabel = new Label(numPhotos);
+
+            VBox albumBox = new VBox(albumLabel, numPhotoLabel, deleteButton, renameButton);
             albumsContainer.getChildren().add(albumBox);
         }
     }
@@ -81,6 +91,24 @@ public class UserHomeController {
             showAlert("Error", "Failed to delete album.");
         }
         listAlbums();
+    }
+
+    private void renameAlbum(Album album) {
+        TextInputDialog dialog = new TextInputDialog(album.getAlbumName());
+        dialog.setTitle("Rename Album");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Enter new name for the album:");
+
+        // Get the response value
+        dialog.showAndWait().ifPresent(newName -> {
+            if (!newName.isEmpty()) {
+                album.setAlbumName(newName);
+                listAlbums(); // Refresh album list
+                showAlert("Success", "Album renamed successfully.");
+            } else {
+                showAlert("Error", "Please enter a valid album name.");
+            }
+        });
     }
 
     @FXML
@@ -134,4 +162,37 @@ public class UserHomeController {
             e.printStackTrace(); // Handle error appropriately
         }
     }
+    /*
+     * @FXML
+     * private void renameButtonClicked(ActionEvent event) {
+     * Button renameButton = (Button) event.getSource();
+     * VBox albumBox = (VBox) renameButton.getParent();
+     * Label albumLabel = (Label) albumBox.getChildren().get(0); // Assuming the
+     * album label is the first child of the
+     * // album box
+     * 
+     * // Retrieve the album name
+     * String currentName = albumLabel.getText();
+     * 
+     * // Display a dialog to prompt the user for the new album name
+     * TextInputDialog dialog = new TextInputDialog(currentName);
+     * dialog.setTitle("Rename Album");
+     * dialog.setHeaderText(null);
+     * dialog.setContentText("Enter new name:");
+     * 
+     * Optional<String> result = dialog.showAndWait();
+     * result.ifPresent(newName -> {
+     * // Update the album name
+     * boolean renamed = user.renameAlbum(currentName, newName);
+     * if (renamed) {
+     * // Refresh album list
+     * listAlbums();
+     * showAlert("Success", "Album renamed successfully.");
+     * } else {
+     * showAlert("Error", "Failed to rename album.");
+     * }
+     * });
+     * 
+     * }
+     */
 }
