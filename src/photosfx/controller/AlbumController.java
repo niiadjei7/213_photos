@@ -2,6 +2,7 @@ package photosfx.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.io.*;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,7 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.stage.*;
 import photosfx.model.*;
 
 public class AlbumController {
@@ -43,12 +44,12 @@ public class AlbumController {
         if (album == null) {
             System.out.println("album load failed");
         }
+        System.out.println(album.getAlbumName() + "loaded");
         showPhotos();
     }
 
     private void showPhotos() {
         photosContainer.getChildren().clear();
-        String caption = "";
         List<Photo> photos = album.getPhotos();
 
         if (photos == null) {
@@ -63,7 +64,7 @@ public class AlbumController {
             recaptionButton.setOnAction(event -> recaptionPhoto(photo));
 
             Label photoLabel = new Label(photo.getCaption());
-            Label tagsLabel = new Label(photo.getTags());
+            Label tagsLabel = new Label(photo.getTags().toString());
 
             VBox photoBox = new VBox(photoLabel, tagsLabel, deleteButton, renameButton);
             photosContainer.getChildren().add(photoBox);
@@ -84,18 +85,18 @@ public class AlbumController {
 
     private void recaptionPhoto(Photo photo) {
         TextInputDialog dialog = new TextInputDialog(photo.getCaption());
-        dialog.setTitle("Rename Album");
+        dialog.setTitle("Recaption photo");
         dialog.setHeaderText(null);
-        dialog.setContentText("Enter new name for the album:");
+        dialog.setContentText("Enter new caption:");
 
         // Get the response value
         dialog.showAndWait().ifPresent(newName -> {
             if (!newName.isEmpty()) {
                 photo.setCaption(newName);
                 showPhotos(); // Refresh album list
-                showAlert("Success", "Album renamed successfully.");
+                showAlert("Success", "Caption changed.");
             } else {
-                showAlert("Error", "Please enter a valid album name.");
+                showAlert("Error", "Please enter a valid caption.");
             }
         });
     }
@@ -106,6 +107,34 @@ public class AlbumController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    @FXML
+    private void addPhotoButtonClicked(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select Photo File");
+        File selectedFile = fileChooser.showOpenDialog(new Stage());
+        if (selectedFile != null) {
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Add Photo");
+            dialog.setHeaderText("Add Photo from Disk");
+            dialog.setContentText("Enter a caption for the photo:");
+
+            Optional<String> result = dialog.showAndWait();
+            result.ifPresent(caption -> {
+                // Create a new Photo instance with the selected file and entered caption
+                Photo photo = new Photo(selectedFile.getName(), null); // You should adjust this to get the photo date
+                photo.setCaption(caption);
+
+                // Add the photo to the album
+                album.addPhoto(photo);
+
+                // Refresh the photos display
+                showPhotos();
+
+                showAlert("Success", "Photo added successfully.");
+            });
+        }
     }
 
 }

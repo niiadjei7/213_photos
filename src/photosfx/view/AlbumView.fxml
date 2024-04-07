@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox fx:id="photosContainer" xmlns:fx="http://javafx.com/fxml" alignment="CENTER" spacing="10" fx:controller="photosfx.controller.AlbumController">
+    <!-- Header -->
+    <Label text="Album Name" fx:id="albumNameLabel" />
+<!-- Add Photo Button -->
+    <Button fx:id="addPhotoButton" text="Add Photo" onAction="#addPhotoButtonClicked" />
+    <!-- Photo Display Area -->
+    <ScrollPane>
+        <VBox fx:id="photoContainer" spacing="10" />
+    </ScrollPane>
+
+    
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+</VBox>

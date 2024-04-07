@@ -1,0 +1,42 @@
+<!-- searchDialog.fxml -->
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="photosfx.SearchDialogController"
+      prefWidth="300" prefHeight="200" spacing="10">
+
+    <Label text="Search Photos" style="-fx-font-size: 16pt;"/>
+
+    <HBox spacing="10">
+        <Label text="Date Range:"/>
+        <DatePicker fx:id="startDatePicker" promptText="Start Date"/>
+        <DatePicker fx:id="endDatePicker" promptText="End Date"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Tag Type:"/>
+        <ComboBox fx:id="tagTypeComboBox" promptText="Select Tag Type">
+            <!-- Populate with tag types -->
+        </ComboBox>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Tag Value:"/>
+        <ComboBox fx:id="tagValueComboBox" promptText="Select Tag Value">
+            <!-- Populate with tag values based on selected tag type -->
+        </ComboBox>
+    </HBox>
+
+    <HBox spacing="10">
+        <Button text="Search" onAction="#searchPhotos"/>
+        <Button text="Cancel" onAction="#closeDialog"/>
+    </HBox>
+
+</VBox>

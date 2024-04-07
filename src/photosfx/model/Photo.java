@@ -5,7 +5,7 @@ import java.util.*;
 
 public class Photo implements Serializable {
     private String caption;
-    private List<String[]> tags;
+    private List<Tag> tags;
     private Calendar date;
 
     public Photo(String name, Calendar date) {
@@ -15,11 +15,10 @@ public class Photo implements Serializable {
         this.tags = new ArrayList<>();
     }
 
-    public String getTags() {
-        String tagset = "";
-        for (String[] tag : this.tags) {
-            tagset += "(" + tag[0] + "," + tag[1] + ")";
-            tagset += ", ";
+    public List<Tag> getTags() {
+        List<Tag> tagset = new ArrayList<>();
+        for (Tag tag : this.tags) {
+            tagset.add(tag);
         }
         return tagset;
     }
@@ -38,7 +37,7 @@ public class Photo implements Serializable {
     }
 
     public void setTag(String type, String value) {
-        String[] tag = new String[] { type, value };
+        Tag tag = new Tag(type, value);
         this.tags.add(tag);
     }
 

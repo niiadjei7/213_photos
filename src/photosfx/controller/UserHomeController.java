@@ -2,8 +2,6 @@ package photosfx.controller;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -40,6 +38,9 @@ public class UserHomeController {
     private Button renameButton;
 
     @FXML
+    private Button openAlbumButton;
+
+    @FXML
     private VBox albumsContainer;
 
     private User user;
@@ -72,13 +73,39 @@ public class UserHomeController {
             Button renameButton = new Button("Rename");
             renameButton.setOnAction(event -> renameAlbum(album));
 
+            Button openAlbumButton = new Button("Open");
+            openAlbumButton.setOnAction(event -> openAlbum(album, openAlbumButton)); // Pass openAlbumButton
+
             numPhotos = album.getPhotos().size() + " photos " + album.getDateRange();
 
             Label albumLabel = new Label(album.getAlbumName());
             Label numPhotoLabel = new Label(numPhotos);
 
-            VBox albumBox = new VBox(albumLabel, numPhotoLabel, deleteButton, renameButton);
+            VBox albumBox = new VBox(albumLabel, numPhotoLabel, openAlbumButton, deleteButton, renameButton);
             albumsContainer.getChildren().add(albumBox);
+        }
+    }
+
+    private void openAlbum(Album album, Button openAlbumButton) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/AlbumView.fxml"));
+            Parent root = loader.load();
+            AlbumController controller = loader.getController();
+            if (album == null) {
+                System.out.println("Album not loaded");
+            }
+            System.out.println("trynig to initialize " + album.getAlbumName());
+            controller.initialize(album); // Pass username to UserHomeController
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle(album.getAlbumName());
+            stage.show();
+
+            // Close the current login window
+            Stage currentStage = (Stage) openAlbumButton.getScene().getWindow();
+            currentStage.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
