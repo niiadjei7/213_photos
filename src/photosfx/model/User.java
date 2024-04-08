@@ -26,26 +26,40 @@ public class User implements Serializable {
         return this.albums;
     }
 
-    public boolean addAlbum(String album) {
+    public boolean addAlbum(Album album) {
         if (albums != null) {
             for (Album x : this.albums) {
-                if (x.getAlbumName().equals(album)) {
+                if (x.getAlbumName().equals(album.getAlbumName())) {
                     return false;// Make sure album name is not taken
                 }
             }
         }
 
-        Album x = new Album(album);
-        this.albums.add(x);
+        this.albums.add(album);
         return true;
     }
 
-    public boolean deleteAlbum(Album album) {
+    public void updateAlbum(Album album) {
+        for (int i = 0; i < albums.size(); i++) {
+            Album x = albums.get(i);
+            if (x.getAlbumName().equals(album.getAlbumName())) {
+                // Replace the existing album with the updated one
+                albums.set(i, album);
+                return;
+            }
+        }
+    }
+
+    public boolean deleteAlbum(Album album, String username) {
+        DataFileManager.deleteData(
+                DataFileManager.basePath + File.separator + username + File.separator + album.getAlbumName());
         return albums.remove(album);
     }
 
     public void saveUser() {
-        DataFileManager.saveData(this, "\\Admin\\" + this.getUsername() + ".dat");
+        File userFolder = new File("\\Admin\\" + File.separator + this.getUsername());
+        userFolder.mkdirs();
+        DataFileManager.saveData(this, userFolder + File.separator + "user.dat");
     }
 
     public boolean renameAlbum(String currentName, String newName) {

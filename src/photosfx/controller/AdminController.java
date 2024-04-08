@@ -115,8 +115,9 @@ public class AdminController {
         String username = userLabel.getText(); // Get the username from the label
         boolean deleted = admin.deleteUser(username);
         if (deleted) {
-            userListVBox.getChildren().remove(userBox); // Remove the user entry from the list
+            admin.deleteUser(username);
         }
+        listUsers();// refresh users
     }
 
     @FXML

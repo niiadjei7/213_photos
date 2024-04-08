@@ -29,17 +29,22 @@ public class LoginController {
 
     @FXML
     private void loginButtonClicked() {
-        String username = usernameField.getText().toLowerCase();
+        String username = usernameField.getText();
         // Here you can perform login logic, e.g., validating username/password
         System.out.println("Login button clicked with username: " + username);
         if (username.equals("admin")) {
             openAdminView();
         } else {
-            String userDataPath = DataFileManager.basePath + File.separator + "Admin" + File.separator
-                    + username.toLowerCase()
-                    + ".dat";
-            user = (User) DataFileManager.loadData(userDataPath);
-            openUserHome(user);
+
+            user = DataFileManager.loadUser(username);
+            if (user == null) {
+                System.out.println("User data not loaded for username: " + username);
+                // Show error message to user
+                // For example: showAlert("Error", "Failed to load user data.");
+            } else {
+                System.out.println("Userhome opened");
+                openUserHome(user);
+            }
         }
 
     }
@@ -73,6 +78,7 @@ public class LoginController {
             stage.setScene(new Scene(root));
             stage.setTitle("User Home");
             stage.show();
+            System.out.println("User loaded and ready to dislpay");
 
             // Close the current login window
             Stage currentStage = (Stage) loginButton.getScene().getWindow();

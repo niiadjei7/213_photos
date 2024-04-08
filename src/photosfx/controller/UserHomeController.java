@@ -50,8 +50,13 @@ public class UserHomeController {
         if (user == null) {
             System.out.println("user load failed");
         }
+        System.out.println("Welcome, " + user.getUsername() + "!!!");
         welcomeLabel.setText("Welcome, " + user.getUsername() + "!");
         listAlbums();
+    }
+
+    public void updateData() {
+        DataFileManager.saveUser(user);
     }
 
     private void listAlbums() {
@@ -84,6 +89,7 @@ public class UserHomeController {
             VBox albumBox = new VBox(albumLabel, numPhotoLabel, openAlbumButton, deleteButton, renameButton);
             albumsContainer.getChildren().add(albumBox);
         }
+        System.out.println("Albums loaded into window...");
     }
 
     private void openAlbum(Album album, Button openAlbumButton) {
@@ -95,7 +101,7 @@ public class UserHomeController {
                 System.out.println("Album not loaded");
             }
             System.out.println("trynig to initialize " + album.getAlbumName());
-            controller.initialize(album); // Pass username to UserHomeController
+            controller.initialize(album, user); // Pass username to UserHomeController
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.setTitle(album.getAlbumName());
@@ -110,7 +116,7 @@ public class UserHomeController {
     }
 
     private void deleteAlbum(Album album) {
-        boolean deleted = user.deleteAlbum(album);
+        boolean deleted = user.deleteAlbum(album, user.getUsername());
         if (deleted) {
             listAlbums(); // Refresh album list
             showAlert("Success", "Album deleted successfully.");
@@ -129,13 +135,15 @@ public class UserHomeController {
         // Get the response value
         dialog.showAndWait().ifPresent(newName -> {
             if (!newName.isEmpty()) {
-                album.setAlbumName(newName);
+                user.renameAlbum(album.getAlbumName(), newName);
                 listAlbums(); // Refresh album list
                 showAlert("Success", "Album renamed successfully.");
             } else {
                 showAlert("Error", "Please enter a valid album name.");
             }
         });
+        updateData();
+        listAlbums();
     }
 
     @FXML
@@ -147,8 +155,10 @@ public class UserHomeController {
     private void saveAlbumButtonClicked(ActionEvent event) {
         String albumName = albumNameField.getText().trim();
         if (!albumName.isEmpty()) {
-            if (user.addAlbum(albumName)) {
+            Album album = new Album(albumName);
+            if (user.addAlbum(album)) {
                 showAlert("Album Created", "Album '" + albumName + "' created successfully.");
+                DataFileManager.saveAlbum(album, user.getUsername());
             } else {
                 showAlert("Error", "Album name already in use");
             }
@@ -157,7 +167,7 @@ public class UserHomeController {
         } else {
             showAlert("Error", "Please enter a valid album name.");
         }
-        user.saveUser();
+        // updateData();
         listAlbums();
     }
 
@@ -189,37 +199,5 @@ public class UserHomeController {
             e.printStackTrace(); // Handle error appropriately
         }
     }
-    /*
-     * @FXML
-     * private void renameButtonClicked(ActionEvent event) {
-     * Button renameButton = (Button) event.getSource();
-     * VBox albumBox = (VBox) renameButton.getParent();
-     * Label albumLabel = (Label) albumBox.getChildren().get(0); // Assuming the
-     * album label is the first child of the
-     * // album box
-     * 
-     * // Retrieve the album name
-     * String currentName = albumLabel.getText();
-     * 
-     * // Display a dialog to prompt the user for the new album name
-     * TextInputDialog dialog = new TextInputDialog(currentName);
-     * dialog.setTitle("Rename Album");
-     * dialog.setHeaderText(null);
-     * dialog.setContentText("Enter new name:");
-     * 
-     * Optional<String> result = dialog.showAndWait();
-     * result.ifPresent(newName -> {
-     * // Update the album name
-     * boolean renamed = user.renameAlbum(currentName, newName);
-     * if (renamed) {
-     * // Refresh album list
-     * listAlbums();
-     * showAlert("Success", "Album renamed successfully.");
-     * } else {
-     * showAlert("Error", "Failed to rename album.");
-     * }
-     * });
-     * 
-     * }
-     */
+
 }

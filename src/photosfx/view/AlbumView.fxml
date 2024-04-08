@@ -7,13 +7,18 @@
 
 <VBox fx:id="photosContainer" xmlns:fx="http://javafx.com/fxml" alignment="CENTER" spacing="10" fx:controller="photosfx.controller.AlbumController">
     <!-- Header -->
-    <Label text="Album Name" fx:id="albumNameLabel" />
-<!-- Add Photo Button -->
-    <Button fx:id="addPhotoButton" text="Add Photo" onAction="#addPhotoButtonClicked" />
-    <!-- Photo Display Area -->
-    <ScrollPane>
-        <VBox fx:id="photoContainer" spacing="10" />
-    </ScrollPane>
+    <children>
+        <Label text="Album Name" fx:id="albumNameLabel" />
+        <!-- Add Photo Button -->
+        <Button fx:id="addPhotoButton" text="Add Photo" onAction="#addPhotoButtonClicked" />
+        <!-- Photo Display Area -->
+        <ScrollPane>
+            <VBox fx:id="photosContainer" spacing="10" />
+        </ScrollPane>
+        <Button fx:id="homeButton" text="Home" onAction="#homeButtonClicked"/>
+        <Button fx:id="logoutButton" text="Logout" onAction="#logoutButtonClicked" />
+    </children>
+    
 
     
 

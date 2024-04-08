@@ -9,7 +9,6 @@
     <children>
         <!-- Other UI components -->
 
-        <!-- Button to create a new album -->
         <Label fx:id="welcomeLabel" />
         <VBox fx:id="albumsContainer" spacing="5" />
         <Button fx:id="createAlbumButton" text="Create Album" onAction="#createAlbumButtonClicked" />

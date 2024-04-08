@@ -45,14 +45,14 @@ public class Album implements Serializable {
         if (!(this.photos.isEmpty())) {
             Photo earliestPhoto = photos.get(0);
             for (Photo photo : photos) {
-                if (photo.getDate().before(earliestPhoto.getDate())) {
+                if (photo.getCalDate().before(earliestPhoto.getCalDate())) {
                     earliestPhoto = photo;
                 }
             }
 
             Photo latestPhoto = photos.get(0);
             for (Photo photo : photos) {
-                if (photo.getDate().after(latestPhoto.getDate())) {
+                if (photo.getCalDate().after(latestPhoto.getCalDate())) {
                     latestPhoto = photo;
                 }
             }

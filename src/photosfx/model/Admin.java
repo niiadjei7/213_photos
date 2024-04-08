@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.scene.chart.PieChart.Data;
+
 public class Admin {
     private List<User> users;
 
@@ -20,7 +22,7 @@ public class Admin {
         // Create a new user
         User user = new User(username, false); // Non-admin user
         users.add(user);
-        saveUser(user);
+        DataFileManager.saveUser(user);
         return true;
     }
 
@@ -28,7 +30,7 @@ public class Admin {
         User user = userExists(username);
         if (user != null && !user.isAdmin()) {
             users.remove(user);
-            DataFileManager.deleteData("Admin" + File.separator + username + ".dat");
+            DataFileManager.deleteData(DataFileManager.basePath + File.separator + username);
             return true;
         }
         return false; // User not found or is admin
@@ -52,16 +54,15 @@ public class Admin {
     }
 
     public void loadUsers() {
-        String adminPath = DataFileManager.basePath + "\\Admin";
+        String adminPath = DataFileManager.basePath;
         File adminFolder = new File(adminPath);
-        File[] userFiles = adminFolder.listFiles();
-        if (userFiles != null) {
-            for (File file : userFiles) {
-                if (file.isFile()) {
-                    User user = (User) DataFileManager.loadData(adminPath + "\\" + file.getName());
-                    if (user != null) {
-                        this.users.add(user);
-                    }
+        File[] userFolders = adminFolder.listFiles(File::isDirectory);
+        if (userFolders != null) {
+            for (File userFolder : userFolders) {
+                String username = userFolder.getName();
+                User user = DataFileManager.loadUser(username);
+                if (user != null) {
+                    this.users.add(user);
                 }
             }
         }
