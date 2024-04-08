@@ -51,7 +51,13 @@ public class AlbumController {
     private Button homeButton;
 
     @FXML
+    private Button copyButton;
+
+    @FXML
     private Button deleteTagButton;
+
+    @FXML
+    private Button moveButton;
 
     @FXML
     private Label captionLabel;
@@ -130,12 +136,18 @@ public class AlbumController {
             Button deleteTagButton = new Button("Delete Tag");
             deleteTagButton.setOnAction(event -> deleteTag(photo));
 
+            Button copyButton = new Button("Copy");
+            copyButton.setOnAction(event -> copyPhoto(photo));
+
+            Button moveButton = new Button("Move");
+            moveButton.setOnAction(event -> movePhoto(photo, album));
+
             Label photoLabel = new Label(photo.getCaption());
             Label tagsLabel = new Label(photo.getTags().toString());
             Label dateLabel = new Label(photo.getDate());
 
             VBox photoBox = new VBox(thumbnailView, photoLabel, tagsLabel, dateLabel, deleteButton, recaptionButton,
-                    addTagsButton, deleteTagButton);
+                    addTagsButton, deleteTagButton, copyButton, moveButton);
             photoBox.setSpacing(5);
             photosContainer.getChildren().add(photoBox);
         }
@@ -296,6 +308,58 @@ public class AlbumController {
                 showAlert("Success", "Photo added successfully.");
             });
         }
+    }
+
+    private void copyPhoto(Photo photo) {
+
+        TextInputDialog dialog = new TextInputDialog(photo.getTags().toString());
+        dialog.setTitle("Copy photo");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Enter destination album");
+
+        dialog.showAndWait().ifPresent(destination -> {
+            if (!destination.isEmpty()) {
+                for (Album x : this.user.albumList()) {
+                    if (x.getAlbumName().equals(destination) && !(x.getPhotos().contains(photo))) {
+                        x.addPhoto(photo);
+                        DataFileManager.saveAlbum(x, this.user.getUsername());
+                        showAlert("Success", "Photo copied.");
+                        break;
+                    }
+                }
+                DataFileManager.saveUser(this.user);
+                showPhotos(); // Refresh album list
+            } else {
+                showAlert("Error", "Copy failed.");
+            }
+        });
+        System.out.println("Photo copied successfully to the destination album.");
+    }
+
+    private void movePhoto(Photo photo, Album source) {
+        TextInputDialog dialog = new TextInputDialog(photo.getTags().toString());
+        dialog.setTitle("Move photo");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Enter destination album");
+
+        dialog.showAndWait().ifPresent(destination -> {
+            if (!destination.isEmpty()) {
+                for (Album x : this.user.albumList()) {
+                    if (x.getAlbumName().equals(destination) && !(x.getPhotos().contains(photo))) {
+                        x.addPhoto(photo);
+                        source.deletePhoto(photo);
+                        DataFileManager.saveAlbum(x, this.user.getUsername());
+                        showAlert("Success", "Photo moved.");
+                        break;
+                    }
+                }
+                DataFileManager.saveUser(this.user);
+                showPhotos(); // Refresh album list
+            } else {
+                showAlert("Error", "Move failed.");
+            }
+        });
+        System.out.println("Photo moved successfully to the destination album.");
     }
 
     @FXML
