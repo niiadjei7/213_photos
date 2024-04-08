@@ -28,8 +28,10 @@ public class Photo implements Serializable {
         int month = this.date.get(Calendar.MONTH) + 1;
         int day = this.date.get(Calendar.DAY_OF_MONTH);
         int year = this.date.get(Calendar.YEAR);
+        int hour = this.date.get(Calendar.HOUR_OF_DAY);
+        int minute = this.date.get(Calendar.MINUTE);
 
-        return String.format("%02d/%02d/%d", month, day, year);
+        return String.format("%02d/%02d/%d %02d:%02d", month, day, year, hour, minute);
     }
 
     public Calendar getCalDate() {
@@ -61,6 +63,10 @@ public class Photo implements Serializable {
 
     public String getPathInDisk() {
         return this.pathInDisk;
+    }
+
+    public void deleteTag(Tag tag) {
+        this.tags.remove(tag);
     }
 
 }

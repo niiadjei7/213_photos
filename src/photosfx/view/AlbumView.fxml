@@ -17,6 +17,7 @@
         </ScrollPane>
         <Button fx:id="homeButton" text="Home" onAction="#homeButtonClicked"/>
         <Button fx:id="logoutButton" text="Logout" onAction="#logoutButtonClicked" />
+        <ImageView fx:id="photoDisplayImageView" />
     </children>
     
 

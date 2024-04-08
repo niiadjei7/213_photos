@@ -188,6 +188,7 @@ public class UserHomeController {
     @FXML
     private void logoutButtonClicked() {
         try {
+            DataFileManager.saveUser(this.user);
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Login.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);

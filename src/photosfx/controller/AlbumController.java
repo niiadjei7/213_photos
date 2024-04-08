@@ -14,6 +14,9 @@ import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.scene.image.*;
 import photosfx.model.*;
+import javafx.geometry.*;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ButtonBar.ButtonData;
 
 public class AlbumController {
 
@@ -46,6 +49,9 @@ public class AlbumController {
 
     @FXML
     private Button homeButton;
+
+    @FXML
+    private Button deleteTagButton;
 
     @FXML
     private Label captionLabel;
@@ -89,6 +95,7 @@ public class AlbumController {
         String userPath = DataFileManager.basePath + File.separator + user.getUsername();
         String albumPath = userPath + File.separator + album.getAlbumName();
         user.updateAlbum(album);
+        DataFileManager.saveUser(this.user);
         System.out.println("Photos up to date...");
         photosContainer.getChildren().clear();
         List<Photo> photos = album.getPhotos();
@@ -120,23 +127,51 @@ public class AlbumController {
             Button addTagsButton = new Button("Add tag");
             addTagsButton.setOnAction(event -> addTag(photo));
 
+            Button deleteTagButton = new Button("Delete Tag");
+            deleteTagButton.setOnAction(event -> deleteTag(photo));
+
             Label photoLabel = new Label(photo.getCaption());
             Label tagsLabel = new Label(photo.getTags().toString());
             Label dateLabel = new Label(photo.getDate());
 
             VBox photoBox = new VBox(thumbnailView, photoLabel, tagsLabel, dateLabel, deleteButton, recaptionButton,
-                    addTagsButton);
+                    addTagsButton, deleteTagButton);
             photoBox.setSpacing(5);
             photosContainer.getChildren().add(photoBox);
         }
     }
 
     private void displayFullSizeImage(Photo photo) {
-        Image fullImage = new Image(photo.getPathInDisk());
-        photoDisplayImageView.setImage(fullImage);
-        captionLabel.setText(photo.getCaption());
-        dateTimeLabel.setText(photo.getDate().toString());
-        tagsList.setText(photo.getTags().toString());
+        File photoFile = new File(photo.getPathInDisk());
+        if (!photoFile.exists()) {
+            System.out.println("Photo file does not exist: " + photo.getPathInDisk());
+            return;
+        }
+
+        // Load the image
+        Image fullImage = new Image(photoFile.toURI().toString());
+
+        // Create an ImageView to display the image
+        ImageView imageView = new ImageView(fullImage);
+        imageView.setPreserveRatio(true);
+        imageView.setFitWidth(600); // Adjust the width as needed
+
+        // Create labels for caption, date of capture, and tags
+        Label captionLabel = new Label("Caption: " + photo.getCaption());
+        Label dateTimeLabel = new Label("Date of Capture: " + photo.getDate());
+        Label tagsLabel = new Label("Tags: " + photo.getTags().toString());
+
+        // Create a VBox to hold the image view
+        VBox vbox = new VBox(imageView, captionLabel, dateTimeLabel, tagsLabel);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setPadding(new Insets(20));
+
+        // Create a new scene and set it to the stage
+        Scene scene = new Scene(vbox);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("Full Size Image");
+        stage.show();
     }
 
     private void deletePhoto(Photo photo) {
@@ -173,12 +208,13 @@ public class AlbumController {
         TextInputDialog dialog = new TextInputDialog(photo.getTags().toString());
         dialog.setTitle("Add tags");
         dialog.setHeaderText(null);
-        dialog.setContentText("Enter tag type and value. Eg: Location, New Brunswick");
+        dialog.setContentText("Enter tag type and value. Eg: Location,New Brunswick");
 
         dialog.showAndWait().ifPresent(newTag -> {
             if (!newTag.isEmpty()) {
-                String[] tag = newTag.split(" ");
+                String[] tag = newTag.split(",");
                 photo.setTag(tag[0], tag[1]);
+                DataFileManager.savePhoto(photo, album.getAlbumName());
                 showPhotos(); // Refresh album list
                 showAlert("Success", "Tag added.");
             } else {
@@ -186,6 +222,37 @@ public class AlbumController {
             }
         });
         showPhotos();
+    }
+
+    private void deleteTag(Photo photo) {
+        // Create a scroll pane to display all tags
+        ScrollPane scrollPane = new ScrollPane();
+        VBox tagsPane = new VBox();
+        for (Tag tag : photo.getTags()) {
+            HBox tagBox = new HBox();
+            Label tagLabel = new Label(tag.toString());
+            Button deleteButton = new Button("Delete");
+            deleteButton.setOnAction(event -> {
+                photo.deleteTag(tag);
+                showPhotos(); // Refresh the photo display
+            });
+            tagBox.getChildren().addAll(tagLabel, deleteButton);
+            tagsPane.getChildren().add(tagBox);
+        }
+        scrollPane.setContent(tagsPane);
+
+        // Create a dialog to display the scroll pane
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Delete Tag");
+        dialog.setHeaderText("Select a tag to delete:");
+        dialog.getDialogPane().setContent(scrollPane);
+
+        // Add a close button to the dialog
+        ButtonType closeButton = new ButtonType("Close", ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(closeButton);
+
+        // Show the dialog
+        dialog.showAndWait();
     }
 
     private void showAlert(String title, String message) {
@@ -257,6 +324,7 @@ public class AlbumController {
     @FXML
     private void logoutButtonClicked() {
         try {
+            DataFileManager.saveUser(this.user);
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Login.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);

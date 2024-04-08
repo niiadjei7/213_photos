@@ -1,6 +1,7 @@
 package photosfx.model;
 
 import java.io.*;
+import java.util.Calendar;
 
 public class DataFileManager implements Serializable {
 
@@ -145,6 +146,7 @@ public class DataFileManager implements Serializable {
     }
 
     public static void savePhoto(Photo photo, String albumFolder) {
+        photo.setDate(Calendar.getInstance());
         if (!(albumFolder.contains(basePath))) {
             albumFolder = basePath + albumFolder;
         }
