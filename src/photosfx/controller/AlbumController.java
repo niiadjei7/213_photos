@@ -18,6 +18,9 @@ import javafx.geometry.*;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ButtonBar.ButtonData;
 
+/**
+ * Controller class for handling actions and events related to the album view.
+ */
 public class AlbumController {
 
     @FXML
@@ -93,6 +96,12 @@ public class AlbumController {
     private int currentPhotoIndex = 0;
     private Stage slideShowStage;
 
+    /**
+     * Initializes the AlbumController with the specified album and user.
+     * 
+     * @param album The album to be displayed and managed.
+     * @param user  The user who owns the album.
+     */
     public void initialize(Album album, User user) {
         this.album = album;
         this.user = user;
@@ -112,6 +121,12 @@ public class AlbumController {
         showPhotos();
     }
 
+    /**
+     * Handles the action of clicking the slideshow button.
+     * Shows a slideshow window displaying all photos in the album.
+     * 
+     * @param event The ActionEvent representing the click event of the slideshow button.
+     */
     @FXML
     private void slideShowButtonClicked(ActionEvent event) {
         if (!album.getPhotos().isEmpty()) {
@@ -121,6 +136,9 @@ public class AlbumController {
         }
     }
 
+    /**
+     * Shows the slideshow window displaying all photos in the album.
+     */
     private void showSlideshowWindow() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Slideshow.fxml"));
@@ -136,6 +154,13 @@ public class AlbumController {
         }
     }
 
+    /**
+     * Updates the UI to display the photos in the album.
+     * Retrieves the list of photos from the album, clears the existing photo display,
+     * and generates UI components to display each photo.
+     * Additionally, it updates the user's album data and saves the changes to the user's file.
+     * If the photos fail to load, an error alert is displayed.
+     */
     private void showPhotos() {
         String userPath = DataFileManager.basePath + File.separator + user.getUsername();
         String albumPath = userPath + File.separator + album.getAlbumName();
@@ -191,6 +216,12 @@ public class AlbumController {
         }
     }
 
+    /**
+ * Displays the full-size image of the specified photo.
+ * If the photo file does not exist, shows an error alert.
+ * 
+ * @param photo The photo object for which to display the full-size image.
+ */
     private void displayFullSizeImage(Photo photo) {
         File photoFile = new File(photo.getPathInDisk());
         if (!photoFile.exists()) {
@@ -236,6 +267,15 @@ public class AlbumController {
         showPhotos();
     }
 
+    /**
+ * Allows the user to recaption a photo by displaying a dialog box.
+ * The user can enter a new caption for the photo, and upon confirmation,
+ * the new caption is set for the photo.
+ * If the user enters an empty string as the new caption, an error alert is displayed.
+ * After recaptioning the photo, the album list is refreshed to reflect the changes.
+ * 
+ * @param photo The photo to be recaptioned.
+ */
     private void recaptionPhoto(Photo photo) {
         TextInputDialog dialog = new TextInputDialog(photo.getCaption());
         dialog.setTitle("Recaption photo");
@@ -255,6 +295,15 @@ public class AlbumController {
         showPhotos();
     }
 
+    /**
+ * Prompts the user to add tags to a specified photo.
+ * Opens a dialog box for the user to enter tag type and value.
+ * Splits the entered tag into type and value, then sets the tag for the photo.
+ * Saves the updated photo information to disk and refreshes the album display.
+ * Shows a success or error message based on the user input.
+ * 
+ * @param photo The photo to which the tag will be added.
+ */
     private void addTag(Photo photo) {
         TextInputDialog dialog = new TextInputDialog(photo.getTags().toString());
         dialog.setTitle("Add tags");
@@ -275,6 +324,13 @@ public class AlbumController {
         showPhotos();
     }
 
+    /**
+ * Deletes a tag associated with the specified photo.
+ * Displays a dialog containing all tags associated with the photo, allowing the user to select
+ * a tag to delete. Upon deletion, the photo display is refreshed to reflect the changes.
+ * 
+ * @param photo The photo from which to delete the tag.
+ */
     private void deleteTag(Photo photo) {
         // Create a scroll pane to display all tags
         ScrollPane scrollPane = new ScrollPane();
@@ -306,6 +362,12 @@ public class AlbumController {
         dialog.showAndWait();
     }
 
+    /**
+ * Displays an alert dialog with the specified title and message.
+ * 
+ * @param title   The title of the alert dialog.
+ * @param message The message to be displayed in the alert dialog.
+ */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -314,6 +376,12 @@ public class AlbumController {
         alert.showAndWait();
     }
 
+    /**
+     * Handles the action of clicking the add photo button.
+     * Opens a file chooser dialog for the user to select a photo file and add it to the album.
+     * 
+     * @param event The ActionEvent representing the click event of the add photo button.
+     */
     @FXML
     private void addPhotoButtonClicked(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
@@ -348,6 +416,13 @@ public class AlbumController {
         }
     }
 
+    /**
+ * Copies the specified photo to another album chosen by the user.
+ * Opens a dialog prompting the user to enter the destination album name.
+ * If the destination album exists and does not already contain the photo, the photo is copied to the destination album.
+ * 
+ * @param photo The photo to be copied.
+ */
     private void copyPhoto(Photo photo) {
 
         TextInputDialog dialog = new TextInputDialog(photo.getTags().toString());
@@ -373,6 +448,16 @@ public class AlbumController {
         });
     }
 
+    /**
+ * Moves the specified photo from its current album to a destination album.
+ * Prompts the user to enter the name of the destination album.
+ * If the destination album is valid and does not already contain the photo,
+ * the photo is moved to the destination album, and the source album is updated accordingly.
+ * Otherwise, an error message is displayed.
+ * 
+ * @param photo  The photo to be moved.
+ * @param source The source album from which the photo is being moved.
+ */
     private void movePhoto(Photo photo, Album source) {
         TextInputDialog dialog = new TextInputDialog(photo.getTags().toString());
         dialog.setTitle("Move photo");
@@ -398,6 +483,10 @@ public class AlbumController {
         });
     }
 
+    /**
+     * Handles the action of clicking the home button.
+     * Redirects the user back to the user home view.
+     */
     @FXML
     private void homeButtonClicked() {
         try {
@@ -421,6 +510,10 @@ public class AlbumController {
         }
     }
 
+    /**
+     * Handles the action of clicking the logout button.
+     * Logs out the user and redirects to the login view.
+     */
     @FXML
     private void logoutButtonClicked() {
         try {
