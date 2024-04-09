@@ -8,6 +8,9 @@ import photosfx.model.Tag;
 
 import java.util.*;
 
+/**
+ * Controller class for displaying and managing a single photo.
+ */
 public class PhotoController {
 
     @FXML
