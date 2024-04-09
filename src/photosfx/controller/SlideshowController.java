@@ -13,6 +13,10 @@ import javafx.scene.control.*;
 
 import java.util.List;
 
+/**
+ * Controller class for the slideshow view in the application.
+ * Manages the display of photos in a slideshow format.
+ */
 public class SlideshowController {
 
     @FXML
@@ -32,6 +36,10 @@ public class SlideshowController {
     private int currentIndex;
     private Timeline slideshowTimeline;
 
+    /**
+     * Initializes the slideshow controller with the specified album.
+     * @param album The album containing the photos for the slideshow.
+     */
     public void initialize(Album album) {
         this.album = album;
         this.photos = album.getPhotos();
@@ -45,6 +53,9 @@ public class SlideshowController {
         }
     }
 
+    /**
+     * Displays the current photo in the slideshow.
+     */
     private void displayPhoto() {
         Photo currentPhoto = photos.get(currentIndex);
         String photoPath = currentPhoto.getPathInDisk();
@@ -53,6 +64,9 @@ public class SlideshowController {
         captionLabel.setText(currentPhoto.getCaption());
     }
 
+    /**
+     * Sets up the timeline for the slideshow.
+     */
     private void setupSlideshowTimeline() {
         slideshowTimeline = new Timeline(
                 new KeyFrame(Duration.seconds(3), event -> showNextPhoto()));
@@ -60,11 +74,18 @@ public class SlideshowController {
         slideshowTimeline.play();
     }
 
+    /**
+     * Shows the next photo in the slideshow.
+     */
     private void showNextPhoto() {
         currentIndex = (currentIndex + 1) % photos.size();
         displayPhoto();
     }
 
+    /**
+     * Handles the action of clicking the previous button.
+     * Displays the previous photo in the slideshow.
+     */
     @FXML
     private void previousButtonClicked() {
         currentIndex = (currentIndex - 1 + photos.size()) % photos.size();
@@ -72,12 +93,19 @@ public class SlideshowController {
         resetSlideshowTimeline();
     }
 
+    /**
+     * Handles the action of clicking the next button.
+     * Displays the next photo in the slideshow.
+     */
     @FXML
     private void nextButtonClicked() {
         showNextPhoto();
         resetSlideshowTimeline();
     }
 
+    /**
+     * Resets the slideshow timeline.
+     */
     private void resetSlideshowTimeline() {
         slideshowTimeline.stop();
         slideshowTimeline.play();
