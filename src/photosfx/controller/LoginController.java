@@ -12,6 +12,10 @@ import javafx.stage.*;
 
 import photosfx.model.*;
 
+/**
+ * Controller class for the login view.
+ * Handles user authentication and navigation to user or admin views.
+ */
 public class LoginController {
 
     @FXML
@@ -22,11 +26,20 @@ public class LoginController {
 
     private User user;
 
+    /**
+     * Initializes the controller.
+     * This method is called automatically by JavaFX after the FXML file has been loaded.
+     * You can perform any initialization tasks here.
+     */
     @FXML
     private void initialize() {
         // Optional: Initialize any UI components or perform setup here
     }
 
+    /**
+     * Handles the action of clicking the login button.
+     * Validates the entered username and navigates to the appropriate view.
+     */
     @FXML
     private void loginButtonClicked() {
         String username = usernameField.getText();
@@ -44,6 +57,10 @@ public class LoginController {
 
     }
 
+    /**
+     * Opens the admin view.
+     * Loads the Admin.fxml file and displays it in a new stage.
+     */
     private void openAdminView() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("../view/Admin.fxml"));
@@ -60,6 +77,12 @@ public class LoginController {
         }
     }
 
+    /**
+     * Opens the user home view.
+     * Loads the UserHome.fxml file and displays it in a new stage.
+     *
+     * @param user The authenticated user.
+     */
     private void openUserHome(User user) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/UserHome.fxml"));
