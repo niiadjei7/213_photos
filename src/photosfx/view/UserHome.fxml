@@ -19,6 +19,7 @@
             <Button text="Save" onAction="#saveAlbumButtonClicked" />
             <Button text="Cancel" onAction="#cancelAlbumButtonClicked" />
         </VBox>
+        <Button fx:id="searchButton" text="Search" onAction="#searchButtonClicked" />
     </children>
         <Button fx:id="logoutButton" text="Logout" onAction="#logoutButtonClicked" />
     <padding>

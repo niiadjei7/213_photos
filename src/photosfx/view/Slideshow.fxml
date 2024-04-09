@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="photosfx.controller.SlideshowController"
+      prefWidth="800" prefHeight="600" alignment="CENTER">
+
+    <ImageView fx:id="imageView" fitWidth="600" fitHeight="400"/>
+    <Label fx:id="captionLabel" />
+    <Label fx:id="tagsLabel" />
+    <Label fx:id="dateLabel" />
+    <Button fx:id="previousButton" text="Previous" onAction="#previousButtonClicked"/>
+    <Button fx:id="nextButton" text="Next" onAction="#nextButtonClicked"/>
+</VBox>

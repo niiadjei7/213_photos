@@ -66,6 +66,15 @@ public class AlbumController {
     private Label dateTimeLabel;
 
     @FXML
+    private Button slideShowButton;
+
+    @FXML
+    private Button nextButton;
+
+    @FXML
+    private Button prevButton;
+
+    @FXML
     private Label tagsList;
 
     @FXML
@@ -81,38 +90,67 @@ public class AlbumController {
 
     private User user;
 
+    private int currentPhotoIndex = 0;
+    private Stage slideShowStage;
+
     public void initialize(Album album, User user) {
         this.album = album;
         this.user = user;
         if (album == null) {
-            System.out.println("album load failed");
+            showAlert("Error", "Album not found");
+            ;
         }
         if (user == null) {
-            System.out.println("user load failed");
+            showAlert("Error", "User not found");
             return;
         }
-        System.out.println(album.getAlbumName() + "loaded");
-        System.out.println("User is " + user.getUsername());
+
+        if (album.getPhotos().isEmpty()) {
+            slideShowButton.setDisable(true);
+        }
+
         showPhotos();
     }
 
+    @FXML
+    private void slideShowButtonClicked(ActionEvent event) {
+        if (!album.getPhotos().isEmpty()) {
+            showSlideshowWindow();
+        } else {
+            showAlert("Error", "No pictures to show");
+        }
+    }
+
+    private void showSlideshowWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Slideshow.fxml"));
+            Parent root = loader.load();
+            SlideshowController controller = loader.getController();
+            controller.initialize(album);
+            slideShowStage = new Stage();
+            slideShowStage.setScene(new Scene(root));
+            slideShowStage.setTitle("Slideshow");
+            slideShowStage.show();
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle error appropriately
+        }
+    }
+
     private void showPhotos() {
-        System.out.println("User is " + this.user.getUsername() + " and album is " + this.album.getAlbumName());
         String userPath = DataFileManager.basePath + File.separator + user.getUsername();
         String albumPath = userPath + File.separator + album.getAlbumName();
         user.updateAlbum(album);
         DataFileManager.saveUser(this.user);
-        System.out.println("Photos up to date...");
         photosContainer.getChildren().clear();
         List<Photo> photos = album.getPhotos();
         if (photos == null) {
-            System.out.println("Photos is null");
+            showAlert("Error", "Photo failed to load");
             return;
         }
         for (Photo photo : photos) {
             File photoFile = new File(photo.getPathInDisk());
             if (!photoFile.exists()) {
-                System.out.println("Photo file does not exist: " + photo.getPathInDisk());
+                showAlert("Error", "Photo not found");
                 continue;
             }
             Image thumbnailImage = new Image(photoFile.toURI().toString());
@@ -156,7 +194,8 @@ public class AlbumController {
     private void displayFullSizeImage(Photo photo) {
         File photoFile = new File(photo.getPathInDisk());
         if (!photoFile.exists()) {
-            System.out.println("Photo file does not exist: " + photo.getPathInDisk());
+            showAlert("Error", "Photo not found");
+            ;
             return;
         }
 
@@ -297,7 +336,6 @@ public class AlbumController {
 
                 // Add the photo to the album
                 album.addPhoto(photo);
-                System.out.println("album name for saving photo: " + album.getAlbumName());
                 String userPath = DataFileManager.basePath + File.separator + user.getUsername();
                 String albumPath = userPath + File.separator + album.getAlbumName();
                 DataFileManager.saveUser(this.user);
@@ -333,7 +371,6 @@ public class AlbumController {
                 showAlert("Error", "Copy failed.");
             }
         });
-        System.out.println("Photo copied successfully to the destination album.");
     }
 
     private void movePhoto(Photo photo, Album source) {
@@ -359,7 +396,6 @@ public class AlbumController {
                 showAlert("Error", "Move failed.");
             }
         });
-        System.out.println("Photo moved successfully to the destination album.");
     }
 
     @FXML
@@ -369,7 +405,7 @@ public class AlbumController {
             Parent root = loader.load();
             UserHomeController controller = loader.getController();
             if (user == null) {
-                System.out.println("User not loaded");
+                showAlert("Error", "User not found");
             }
             controller.initialize(user); // Pass username to UserHomeController
             Stage stage = new Stage();

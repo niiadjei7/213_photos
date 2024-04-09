@@ -5,19 +5,19 @@ import java.util.Calendar;
 
 public class DataFileManager implements Serializable {
 
-    public static final String basePath = "C:\\Users\\rekaa\\OneDrive\\Desktop\\Pthotos_app_data" + File.separator
-            + "Admin";
+    // public static final String basePath =
+    // "C:\\Users\\rekaa\\OneDrive\\Desktop\\Pthotos_app_data" + File.separator
+    // + "Admin";
+    public static final String basePath = "photos_data";// Edit as desired.
 
     public static void saveData(Object data, String fileName) {
         // File folder = new File(itemFolder);
         // folder.mkdirs();
-        System.out.println("Attempted file path: " + fileName);
         try (FileOutputStream fileOut = new FileOutputStream(fileName);
                 ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
 
             // Write the serialized data to the file
             objectOut.writeObject(data);
-            System.out.println("Data saved to " + fileName);
         } catch (IOException e) {
             System.err.println("Error saving data to disk: " + e.getMessage());
         }
@@ -40,7 +40,6 @@ public class DataFileManager implements Serializable {
     public static void deleteData(String path) {
         File file = new File(path);
         if (!file.exists()) {
-            System.out.println("File or directory " + path + " does not exist.");
             return;
         }
 
@@ -68,7 +67,6 @@ public class DataFileManager implements Serializable {
         folder.mkdirs();
 
         String userDataPath = userFolder + File.separator + "user.dat";
-        System.out.println("userDataPath: " + userDataPath);
         saveData(user, userDataPath);
 
         for (Album album : user.albumList()) {
@@ -78,19 +76,16 @@ public class DataFileManager implements Serializable {
 
     public static User loadUser(String username) {
         String userFolder = basePath + File.separator + username;
-        System.out.println("Loading user from: " + userFolder);
         String userDataPath = userFolder + File.separator + "user.dat";
 
         User user = (User) loadData(userDataPath);
 
         if (user != null) {
-            System.out.println("user loaded...");
             File[] albumFolders = new File(userFolder).listFiles(File::isDirectory);
             if (albumFolders != null) {
                 for (File albumFolder : albumFolders) {
                     Album album = loadAlbum(albumFolder.getAbsolutePath(), user);
                     if (album != null) {
-                        System.out.println("Album " + album.getAlbumName() + " loaded...");
                         user.addAlbum(album);
                     }
                 }
@@ -110,17 +105,14 @@ public class DataFileManager implements Serializable {
         folder.mkdirs();
 
         String albumDataPath = albumFolder + File.separator + "album.dat";
-        System.out.println("attempted save path: " + albumDataPath);
         saveData(album, albumDataPath);
 
         for (Photo photo : album.getPhotos()) {
-            System.out.println("albumFolder: " + albumFolder);
             savePhoto(photo, albumFolder);
         }
     }
 
     public static Album loadAlbum(String albumFolder, User user) {
-        System.out.println("Loading albums from: " + albumFolder);
         String albumDataPath = albumFolder + File.separator + "album.dat";
         Album album = (Album) loadData(albumDataPath);
 
@@ -128,17 +120,13 @@ public class DataFileManager implements Serializable {
             File[] photoFiles = new File(albumFolder)
                     .listFiles((dir, name) -> name.endsWith(".dat") && !name.equals("album.dat"));
             if (photoFiles != null) {
-                System.out.println("Photo files present");
                 for (File photoFile : photoFiles) {
 
                     Photo photo = loadPhoto(photoFile.getAbsolutePath(), user);
                     if (photo != null) {
                         album.addPhoto(photo);
-                        System.out.println("photo " + photo.getCaption() + " loaded...");
                     }
                 }
-            } else {
-                System.out.println("No photo files present");
             }
         }
 
@@ -151,7 +139,6 @@ public class DataFileManager implements Serializable {
             albumFolder = basePath + albumFolder;
         }
         String photoDataPath = File.separator + albumFolder + File.separator + photo.getCaption() + ".dat";
-        System.out.println("Attempted save path for photo: " + photoDataPath);
 
         try {
             File folder = new File(photoDataPath).getParentFile();
@@ -162,7 +149,6 @@ public class DataFileManager implements Serializable {
             }
 
             saveData(photo, photoDataPath);
-            System.out.println("Photo saved successfully at: " + photoDataPath);
         } catch (IOException e) {
             System.err.println("Error saving photo: " + e.getMessage());
             e.printStackTrace();
@@ -175,14 +161,8 @@ public class DataFileManager implements Serializable {
     }
 
     public static Photo loadPhoto(String photoFolder, User user) {
-        System.out.println("photoFolder: " + photoFolder);
         String photoDataPath = photoFolder;
         Photo photo = (Photo) loadData(photoDataPath);
-        if (photo != null) {
-            System.out.println("photo loaded");
-        } else {
-            System.out.println("photo loaded as null");
-        }
 
         /*
          * if (photo != null) {

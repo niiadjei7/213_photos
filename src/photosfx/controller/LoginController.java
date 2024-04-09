@@ -30,19 +30,14 @@ public class LoginController {
     @FXML
     private void loginButtonClicked() {
         String username = usernameField.getText();
-        // Here you can perform login logic, e.g., validating username/password
-        System.out.println("Login button clicked with username: " + username);
         if (username.equals("admin")) {
             openAdminView();
         } else {
 
             user = DataFileManager.loadUser(username);
             if (user == null) {
-                System.out.println("User data not loaded for username: " + username);
-                // Show error message to user
-                // For example: showAlert("Error", "Failed to load user data.");
+                return;
             } else {
-                System.out.println("Userhome opened");
                 openUserHome(user);
             }
         }
@@ -71,14 +66,13 @@ public class LoginController {
             Parent root = loader.load();
             UserHomeController controller = loader.getController();
             if (user == null) {
-                System.out.println("User not loaded");
+                return;
             }
             controller.initialize(user); // Pass username to UserHomeController
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.setTitle("User Home");
             stage.show();
-            System.out.println("User loaded and ready to dislpay");
 
             // Close the current login window
             Stage currentStage = (Stage) loginButton.getScene().getWindow();

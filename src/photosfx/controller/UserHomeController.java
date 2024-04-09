@@ -9,7 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.stage.*;
 import photosfx.model.*;
 
 public class UserHomeController {
@@ -22,6 +22,9 @@ public class UserHomeController {
 
     @FXML
     private VBox createAlbumBox;
+
+    @FXML
+    private Button searchButton;
 
     @FXML
     private TextField albumNameField;
@@ -48,9 +51,9 @@ public class UserHomeController {
     public void initialize(User user) {
         this.user = user;
         if (user == null) {
-            System.out.println("user load failed");
+            showAlert("Error", "User not found");
+            ;
         }
-        System.out.println("Welcome, " + user.getUsername() + "!!!");
         welcomeLabel.setText("Welcome, " + user.getUsername() + "!");
         listAlbums();
     }
@@ -68,7 +71,6 @@ public class UserHomeController {
 
         // Create UI components for each album
         if (albums == null) {
-            System.out.println("Albums is null");
             return;
         }
         for (Album album : albums) {
@@ -89,7 +91,6 @@ public class UserHomeController {
             VBox albumBox = new VBox(albumLabel, numPhotoLabel, openAlbumButton, deleteButton, renameButton);
             albumsContainer.getChildren().add(albumBox);
         }
-        System.out.println("Albums loaded into window...");
     }
 
     private void openAlbum(Album album, Button openAlbumButton) {
@@ -98,9 +99,8 @@ public class UserHomeController {
             Parent root = loader.load();
             AlbumController controller = loader.getController();
             if (album == null) {
-                System.out.println("Album not loaded");
+                showAlert("Error", "Album not found");
             }
-            System.out.println("trynig to initialize " + album.getAlbumName());
             controller.initialize(album, user); // Pass username to UserHomeController
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
@@ -196,6 +196,28 @@ public class UserHomeController {
                                                                        // triggered the action
             stage.setScene(scene);
             stage.show();
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle error appropriately
+        }
+    }
+
+    @FXML
+    private void searchButtonClicked(ActionEvent event) {
+        try {
+            // Load the SearchDialog.fxml file
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/SearchDialog.fxml"));
+            Parent root = loader.load();
+
+            // Create a new stage for the search dialog
+            Stage searchStage = new Stage();
+            searchStage.initModality(Modality.WINDOW_MODAL);
+            searchStage.initOwner(((Stage) userHomeVBox.getScene().getWindow())); // Set the owner window
+            searchStage.setTitle("Search Photos");
+            searchStage.setScene(new Scene(root));
+
+            // Show the search dialog
+            searchStage.showAndWait(); // Wait for the search dialog to be closed before continuing
+
         } catch (IOException e) {
             e.printStackTrace(); // Handle error appropriately
         }

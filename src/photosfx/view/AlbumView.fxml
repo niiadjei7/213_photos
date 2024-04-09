@@ -15,6 +15,7 @@
         <ScrollPane>
             <VBox fx:id="photosContainer" spacing="10" />
         </ScrollPane>
+        <Button fx:id="slideShowButton" text="Start Slideshow" onAction="#slideShowButtonClicked"/>
         <Button fx:id="homeButton" text="Home" onAction="#homeButtonClicked"/>
         <Button fx:id="logoutButton" text="Logout" onAction="#logoutButtonClicked" />
         <ImageView fx:id="photoDisplayImageView" />
