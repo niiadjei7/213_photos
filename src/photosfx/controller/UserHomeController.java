@@ -12,6 +12,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.*;
 import photosfx.model.*;
 
+/**
+ * Controller class for the User Home view.
+ * Handles user interactions and actions related to the user's home interface.
+ */
 public class UserHomeController {
 
     @FXML
@@ -48,6 +52,11 @@ public class UserHomeController {
 
     private User user;
 
+    /**
+     * Initializes the UserHomeController with the logged-in user.
+     *
+     * @param user The logged-in user.
+     */
     public void initialize(User user) {
         this.user = user;
         if (user == null) {
@@ -58,10 +67,16 @@ public class UserHomeController {
         listAlbums();
     }
 
+    /**
+     * Updates user data by saving changes.
+     */
     public void updateData() {
         DataFileManager.saveUser(user);
     }
 
+    /**
+     * Lists all albums belonging to the user.
+     */
     private void listAlbums() {
         // Clear existing albums
         albumsContainer.getChildren().clear();
@@ -93,6 +108,12 @@ public class UserHomeController {
         }
     }
 
+    /**
+     * Opens the selected album.
+     *
+     * @param album            The album to be opened.
+     * @param openAlbumButton  The button triggering the action.
+     */
     private void openAlbum(Album album, Button openAlbumButton) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/AlbumView.fxml"));
@@ -115,6 +136,11 @@ public class UserHomeController {
         }
     }
 
+    /**
+     * Deletes the specified album.
+     *
+     * @param album The album to be deleted.
+     */
     private void deleteAlbum(Album album) {
         boolean deleted = user.deleteAlbum(album, user.getUsername());
         if (deleted) {
@@ -126,6 +152,11 @@ public class UserHomeController {
         listAlbums();
     }
 
+    /**
+     * Renames the specified album.
+     *
+     * @param album The album to be renamed.
+     */
     private void renameAlbum(Album album) {
         TextInputDialog dialog = new TextInputDialog(album.getAlbumName());
         dialog.setTitle("Rename Album");
@@ -146,37 +177,68 @@ public class UserHomeController {
         listAlbums();
     }
 
+    /**
+ * Handles the action of clicking the create album button.
+ * Makes the create album box visible, allowing the user to enter a new album name.
+ *
+ * @param event The ActionEvent representing the click event of the create album button.
+ */
     @FXML
     private void createAlbumButtonClicked(ActionEvent event) {
         createAlbumBox.setVisible(true);
     }
 
+    /**
+ * Handles the action of clicking the save album button.
+ * Creates a new album with the provided name, adds it to the user's list of albums,
+ * and saves it to the data file. Displays an alert indicating success or failure.
+ *
+ * @param event The ActionEvent representing the click event of the save album button.
+ */
     @FXML
     private void saveAlbumButtonClicked(ActionEvent event) {
         String albumName = albumNameField.getText().trim();
         if (!albumName.isEmpty()) {
+            // Create a new album with the provided name
             Album album = new Album(albumName);
+            // Add the album to the user's list of albums
             if (user.addAlbum(album)) {
+                // If the album was added successfully, save it to the data file
                 showAlert("Album Created", "Album '" + albumName + "' created successfully.");
                 DataFileManager.saveAlbum(album, user.getUsername());
             } else {
+                // If the album name is already in use, display an error alert
                 showAlert("Error", "Album name already in use");
             }
+            // Clear the album name field and hide the create album box
             albumNameField.clear();
             createAlbumBox.setVisible(false);
         } else {
+            // If the provided album name is empty, display an error alert
             showAlert("Error", "Please enter a valid album name.");
         }
-        // updateData();
+        // Update the list of albums displayed in the UI
         listAlbums();
     }
 
+    /**
+ * Handles the action of clicking the cancel album button.
+ * Clears the album name field and hides the create album box.
+ *
+ * @param event The ActionEvent representing the click event of the cancel album button.
+ */
     @FXML
     private void cancelAlbumButtonClicked(ActionEvent event) {
         albumNameField.clear();
         createAlbumBox.setVisible(false);
     }
 
+    /**
+ * Displays an alert dialog with the specified title and message.
+ *
+ * @param title   The title of the alert dialog.
+ * @param message The message to be displayed in the alert dialog.
+ */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -185,6 +247,10 @@ public class UserHomeController {
         alert.showAndWait();
     }
 
+    /**
+     * Handles the action of clicking the logout button.
+     * Saves user data and returns to the login screen.
+     */
     @FXML
     private void logoutButtonClicked() {
         try {
@@ -201,6 +267,12 @@ public class UserHomeController {
         }
     }
 
+    /**
+     * Handles the action of clicking the search button.
+     * Opens a search dialog window where users can search for photos based on various criteria.
+     *
+     * @param event The ActionEvent representing the click event of the search button.
+     */
     @FXML
     private void searchButtonClicked(ActionEvent event) {
         try {
