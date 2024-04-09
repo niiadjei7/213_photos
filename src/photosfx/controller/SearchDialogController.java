@@ -6,6 +6,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.stage.Stage;
 
+/**
+ * Controller class for the search dialog window.
+ * Handles user interactions and search functionality.
+ */
 public class SearchDialogController {
 
     @FXML
@@ -22,16 +26,28 @@ public class SearchDialogController {
 
     private Stage dialogStage;
 
-    // Getter and setter for dialogStage
+    /**
+     * Gets the dialog stage.
+     *
+     * @return The dialog stage.
+     */
     public Stage getDialogStage() {
         return dialogStage;
     }
 
+    /**
+     * Sets the dialog stage.
+     *
+     * @param dialogStage The dialog stage to set.
+     */
     public void setDialogStage(Stage dialogStage) {
         this.dialogStage = dialogStage;
     }
 
-    // Method to handle search button click
+    /**
+     * Handles the action of clicking the search button.
+     * Performs the search based on the selected options and closes the dialog.
+     */
     @FXML
     private void searchButtonClicked() {
         // Implement search functionality here based on selected options
@@ -39,7 +55,10 @@ public class SearchDialogController {
         dialogStage.close();
     }
 
-    // Method to handle cancel button click
+    /**
+     * Handles the action of clicking the cancel button.
+     * Closes the dialog without performing the search.
+     */
     @FXML
     private void cancelButtonClicked() {
         // Close the dialog without performing search
